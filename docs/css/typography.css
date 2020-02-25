@@ -1,0 +1,69 @@
+:root {
+  --pink-color: #f7989c;
+  --mint-color: #71e2dc;
+  --blue-color: #003372;
+
+  /*** fluid typography settings ***/
+  --theme-font-size-breakpoint: 1440;
+  --theme-font-size-minimum-value: 16;
+  --theme-font-size-minimum-value-breakpoint: 320;
+  --theme-font-size-slope-adjust: 0.6;
+  --theme-addon-multiplier: 0;
+
+  /*** create a unit value that is relative to the viewport width to all font sizes ***/
+  --theme-addon-unit: calc(1vw - var(--theme-font-size-breakpoint) * 1px / 100);
+  --theme-addon: calc(var(--theme-addon-unit) * var(--theme-addon-multiplier));
+
+  --ms-ratio: 1.2;
+  --ms-0: 24;
+
+  --ms-1: calc(var(--ms-0) * var(--ms-ratio));
+  --ms-2: calc(var(--ms-1) * var(--ms-ratio));
+  --ms-3: calc(var(--ms-2) * var(--ms-ratio));
+  --ms-4: calc(var(--ms-3) * var(--ms-ratio));
+  --ms-5: calc(var(--ms-4) * var(--ms-ratio));
+  --ms-6: calc(var(--ms-5) * var(--ms-ratio));
+  --ms-7: calc(var(--ms-6) * var(--ms-ratio));
+  --ms-8: calc(var(--ms-7) * var(--ms-ratio));
+
+  /*@for $i from 1 through 8 {
+    --ms-#{$i}: calc(var(--ms-#{$i - 1}) * var(--ms-ratio));
+  } */
+}
+
+* {
+  /*** x0 - viewport width at which font sizes should reach minimum value
+  // y0 - minimum font size
+  // x1 - viewport width at which we know the value for the font size
+  // y1 - known font size ***/
+  --x0: var(--theme-font-size-minimum-value-breakpoint);
+  --y0: var(--theme-font-size-minimum-value);
+  --x1: var(--theme-font-size-breakpoint);
+
+  /*** solving a first degree equation: y = ax + b ***/
+  --y1: var(--font-size);
+  --y0-new: calc(
+    var(--y1) - (var(--y1) - var(--y0)) * var(--theme-font-size-slope-adjust)
+  );
+
+  /*** calculate the slope and the remainder for the equation ***/
+  --a: calc((var(--y1) - var(--y0-new)) / (var(--x1) - var(--x0)));
+  --b: calc(var(--y0-new) - var(--a) * var(--x0));
+
+  /*** x2 - viewport width at a given time
+  // y2 - font size value we need to find out ***/
+  --y2: calc(var(--a) * 100vw + var(--b) * 1px);
+  --final-font-size: calc(var(--y2) + var(--theme-addon));
+}
+
+html {
+  font-size: 1px; /*for using REM units*/
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-size: 24rem;
+  font-weight: 400;
+  line-height: 1.3;
+  color: #222;
+}
